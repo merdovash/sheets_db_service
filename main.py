@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 
 from data import get_data
+from wikipedia_search import cached_wikipedia_page_url
 
 app = FastAPI()
 
@@ -30,3 +31,8 @@ async def read_item(path):
 @app.get('/data')
 async def root():
     return cached_data(datetime.now().strftime('%Y-%m-%d %H-%M'))
+
+
+@app.get('/wikipedia/{name}')
+async def wikipedia(name):
+    return cached_wikipedia_page_url(name)

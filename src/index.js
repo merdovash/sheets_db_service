@@ -8,9 +8,25 @@ class Person extends React.Component {
     constructor(props) {
     super(props);
     this.state = {
-        info: props.info
+        info: props.info,
+        wikipedia_page: props.info.wikipedia_page || null,
+        loading: !props.info.wikipedia_page,
     };
   }
+
+  async componentDidMount() {
+    if (this.state.loading) {
+        const url = '/wikipedia/'+this.state.info.name;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+        this.setState({
+            loading: false,
+            wikipedia_page: data,
+        })
+    }
+  }
+
 
   render() {
     return (
@@ -34,13 +50,22 @@ class Person extends React.Component {
             Заслуги
           </MaterialUI.Typography>
             { 
-              this.state.info.link && (
-                <MaterialUI.Button href={this.state.info.link}>
-                  {
-                    this.state.info.link.includes('twitter') ? 'Twitter' : this.state.info.link.includes('youtube') ? 'Youtube' : this.state.info.link.includes('instagram') ? 'Instagram': this.state.info.link
-                  }
-                </MaterialUI.Button>
-              )
+              [
+                this.state.info.link && (
+                  <MaterialUI.Button href={this.state.info.link}>
+                    {
+                      this.state.info.link.includes('twitter') ? 'Twitter' : this.state.info.link.includes('youtube') ? 'Youtube' : this.state.info.link.includes('instagram') ? 'Instagram': this.state.info.link
+                    }
+                  </MaterialUI.Button>
+                ),
+
+                this.state.wikipedia_page && (
+                  <MaterialUI.Button href={this.state.wikipedia_page}>
+                    wikipedia
+                  </MaterialUI.Button>
+                )
+                    
+              ]
             }
           </MaterialUI.CardActions>
         </MaterialUI.Card >
@@ -90,5 +115,5 @@ class LikeButton extends React.Component {
   }
 }
 
-const domContainer = document.querySelector('#like_button_container');
+const domContainer = document.querySelector('#root_container');
 ReactDOM.render(e(LikeButton), domContainer);
